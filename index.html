@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SurTar - Web Harmonium & Piano</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for Indian/Classical Vibe and Modern Minimalist Design -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b090a;
+            color: #f5f3f4;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .wood-gradient-harmonium {
+            background: linear-gradient(135deg, #2b1810 0%, #1a0d0a 50%, #0f0705 100%);
+            border: 8px solid #4a281a;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 20px 40px rgba(0,0,0,0.7);
+        }
+        .wood-gradient-piano {
+            background: linear-gradient(135deg, #1f1f1f 0%, #111111 50%, #050505 100%);
+            border: 8px solid #2d2d2d;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.9), 0 20px 40px rgba(0,0,0,0.8);
+        }
+        .bellows-fold {
+            transition: transform 0.15s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        /* Custom Key Styling to mimic authentic materials */
+        .white-key {
+            background: linear-gradient(to bottom, #ffffff 0%, #f6f5f3 80%, #e8e6e1 100%);
+            box-shadow: 
+                0 4px 4px rgba(0,0,0,0.3),
+                inset 0 -4px 0px #b5b2a9,
+                inset 1px 0 0px rgba(255,255,255,0.8),
+                inset -1px 0 0px rgba(0,0,0,0.1);
+            transform-origin: top;
+            transition: transform 0.05s ease, background 0.05s ease, box-shadow 0.05s ease;
+        }
+        .white-key.active {
+            background: linear-gradient(to bottom, #eae7e0 0%, #d8d4c7 100%);
+            box-shadow: 
+                0 1px 1px rgba(0,0,0,0.4),
+                inset 0 -1px 0px #9d998d,
+                inset 2px 0 3px rgba(0,0,0,0.15);
+            transform: rotateX(-1.5deg) scaleY(0.99) translateY(2px);
+        }
+        .black-key {
+            background: linear-gradient(to bottom, #1e1e1e 0%, #0f0f0f 80%, #000000 100%);
+            box-shadow: 
+                0 3px 6px rgba(0,0,0,0.5),
+                inset 0 -3px 0px #1a1a1a,
+                inset 1px 1px 0px rgba(255,255,255,0.15);
+            transform-origin: top;
+            transition: transform 0.05s ease, background 0.05s ease, box-shadow 0.05s ease;
+            z-index: 10;
+        }
+        .black-key.active {
+            background: linear-gradient(to bottom, #2d2d2d 0%, #151515 100%);
+            box-shadow: 
+                0 1px 2px rgba(0,0,0,0.6),
+                inset 0 -1px 0px #0a0a0a;
+            transform: rotateX(-2deg) scaleY(0.97) translateY(2px);
+        }
+        /* Glow animations */
+        .glow-red {
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+        }
+        .glow-gold {
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
+        }
+        /* Bellows pumping dynamic visuals */
+        @keyframes compress {
+            0%, 100% { transform: scaleX(1); }
+            50% { transform: scaleX(0.85); }
+        }
+        .compressing {
+            animation: compress 0.2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen justify-between overflow-x-hidden">
+
+    <!-- Header Navigation Bar -->
+    <header class="w-full bg-[#161210]/90 border-b border-[#302521] px-6 py-3 flex flex-wrap justify-between items-center gap-4 z-20">
+        <div class="flex items-center space-x-3">
+            <div class="p-2 bg-amber-950/50 rounded-lg border border-amber-800/30">
+                <!-- Decorative Swara Symbol SVG / Sitar Silhouette -->
+                <svg class="w-8 h-8 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5 1.5.67 1.5 1.5zm-1.5-3.5c-.55 0-1-.45-1-1V8c0-.55.45-1 1-1s1.45 1 1 1v5c0 .55-.45 1-1 1z"/>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-xl md:text-2xl font-bold tracking-widest text-amber-500 font-['Cinzel_Decorative']">SurTar</h1>
+                <p class="text-xs text-amber-700/80 font-medium">Harmonium & Piano Synthesizer</p>
+            </div>
+        </div>
+
+        <!-- Utility Global Settings Panel -->
+        <div class="flex flex-wrap items-center gap-4">
+            <!-- Global Volume Slider -->
+            <div class="flex items-center space-x-2 bg-black/40 px-3 py-1.5 rounded-full border border-white/5">
+                <span class="text-amber-500 text-xs">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                </span>
+                <input type="range" id="global-volume" min="0" max="1" step="0.05" value="0.7" class="w-20 md:w-28 h-1 bg-amber-950 rounded-lg appearance-none cursor-pointer accent-amber-500">
+            </div>
+
+            <!-- Mapping labels selector -->
+            <div class="flex items-center bg-black/40 p-0.5 rounded-lg border border-white/5 text-xs">
+                <button id="lbl-keys" class="px-2.5 py-1 rounded-md text-amber-500 bg-[#301c15] font-semibold transition">Keys</button>
+                <button id="lbl-notes" class="px-2.5 py-1 rounded-md text-zinc-400 hover:text-zinc-200 transition">Notes</button>
+                <button id="lbl-none" class="px-2.5 py-1 rounded-md text-zinc-400 hover:text-zinc-200 transition">None</button>
+            </div>
+
+            <!-- Quick Start Audio Initializer Button -->
+            <button id="btn-audio-init" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs px-4 py-2 rounded-lg shadow-md transition flex items-center gap-1.5 animate-pulse">
+                <span class="w-2.5 h-2.5 bg-white rounded-full"></span>
+                Start Sound
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Instrument Workspace -->
+    <main class="flex-grow flex flex-col items-center justify-center p-3 md:p-6 max-w-7xl mx-auto w-full gap-4">
+        
+        <!-- Toggle Switch Panel for Instrument Selection -->
+        <div class="flex justify-center w-full max-w-md">
+            <div class="grid grid-cols-2 gap-2 bg-[#1c1310] p-1.5 rounded-2xl border border-[#3e2920] w-full shadow-2xl">
+                <button id="selector-harmonium" class="flex flex-col items-center justify-center py-3 px-4 rounded-xl text-amber-500 bg-amber-950/40 border border-amber-800/40 shadow-inner transition group">
+                    <span class="text-sm font-bold tracking-wide">Harmonium</span>
+                    <span class="text-[10px] text-amber-600/80 group-hover:text-amber-500/90">Traditional Reeds</span>
+                </button>
+                <button id="selector-piano" class="flex flex-col items-center justify-center py-3 px-4 rounded-xl text-zinc-500 hover:text-zinc-300 transition group">
+                    <span class="text-sm font-bold tracking-wide">Grand Piano</span>
+                    <span class="text-[10px] text-zinc-600 group-hover:text-zinc-500">Acoustic Resonance</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- The Instrument Console Housing (Switches visually dynamic based on active instrument) -->
+        <div id="instrument-body" class="w-full wood-gradient-harmonium rounded-2xl p-4 md:p-6 transition-all duration-500">
+            
+            <!-- INSTRUMENT INTERACTIVE DETAILS CONTROLLER -->
+            <div class="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4 items-center bg-black/50 p-4 rounded-xl border border-white/5">
+                
+                <!-- Harmonium Exclusive Controls -->
+                <div id="harmonium-controls" class="col-span-1 md:col-span-2 flex flex-wrap gap-4 justify-between items-center">
+                    <!-- Reed Stop Knobs (Drawstops) -->
+                    <div class="flex items-center space-x-3">
+                        <span class="text-[10px] uppercase tracking-wider font-bold text-amber-700/90 block">Stops (Octaves)</span>
+                        <div class="flex space-x-2">
+                            <!-- Bass Stop -->
+                            <button id="stop-bass" class="w-10 h-10 rounded-full bg-stone-300 border-4 border-amber-900 shadow-md flex items-center justify-center text-[10px] font-bold text-zinc-800 transition active:scale-95 glow-gold" title="Toggle Bass Reed Octave">
+                                B
+                            </button>
+                            <!-- Male Stop -->
+                            <button id="stop-male" class="w-10 h-10 rounded-full bg-stone-300 border-4 border-amber-900 shadow-md flex items-center justify-center text-[10px] font-bold text-zinc-800 transition active:scale-95 glow-gold" title="Toggle Male Reed (Fundamental)">
+                                M
+                            </button>
+                            <!-- Female Stop -->
+                            <button id="stop-female" class="w-10 h-10 rounded-full bg-stone-300 border-4 border-amber-900 shadow-md flex items-center justify-center text-[10px] font-bold text-zinc-800 transition active:scale-95" title="Toggle Female Reed (Octave)">
+                                F
+                            </button>
+                            <!-- Vibrato/Chorus Stop -->
+                            <button id="stop-chorus" class="w-10 h-10 rounded-full bg-stone-300 border-4 border-amber-900 shadow-md flex items-center justify-center text-[10px] font-bold text-zinc-800 transition active:scale-95" title="Toggle Swara Vibrato">
+                                V
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Bellows Mode Toggle & Pressure Indicator -->
+                    <div class="flex items-center space-x-4">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] uppercase tracking-wider font-bold text-amber-700/90">Bellows Mode</span>
+                            <div class="flex items-center mt-1">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="auto-bellows" class="sr-only peer" checked>
+                                    <div class="w-9 h-5 bg-stone-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-amber-500 after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-950/80"></div>
+                                    <span class="ml-2 text-xs text-amber-500/90 font-medium">Auto</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Manual Pressure meter -->
+                        <div id="pressure-meter-container" class="hidden flex-col">
+                            <span class="text-[10px] uppercase tracking-wider font-bold text-amber-700/90">Wind Pressure</span>
+                            <div class="w-24 h-2 bg-stone-800 rounded-full mt-1.5 overflow-hidden border border-white/5">
+                                <div id="pressure-bar" class="h-full bg-amber-500 transition-all duration-100" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Piano Exclusive Controls -->
+                <div id="piano-controls" class="hidden col-span-1 md:col-span-2 flex flex-wrap gap-4 items-center">
+                    <!-- Sustain Switch -->
+                    <div class="flex items-center space-x-3">
+                        <span class="text-[10px] uppercase tracking-wider font-bold text-zinc-500 block">Sustain Pedal</span>
+                        <button id="btn-sustain" class="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-zinc-400 font-semibold text-xs rounded-lg border border-white/10 flex items-center gap-2 transition">
+                            <span id="sustain-dot" class="w-2 h-2 rounded-full bg-zinc-600"></span>
+                            Pedal (Spacebar)
+                        </button>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <span class="text-[10px] uppercase tracking-wider font-bold text-zinc-500">Sound Decay</span>
+                        <input type="range" id="piano-decay" min="1" max="6" step="0.5" value="3.5" class="w-28 h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-zinc-500 mt-2">
+                    </div>
+                </div>
+
+                <!-- Live Oscilloscope (Shared Canvas Visualizer) -->
+                <div class="col-span-1 flex flex-col justify-center items-end w-full">
+                    <span class="text-[10px] uppercase tracking-wider font-bold text-stone-500 mb-1 block self-start md:self-end">Live Swara Spectrum</span>
+                    <canvas id="visualizer" class="w-full md:w-48 h-10 bg-black/40 rounded-lg border border-white/5"></canvas>
+                </div>
+
+            </div>
+
+            <!-- BELLOWS DRAW COMPONENT (Interactive Harmonium Bellows) -->
+            <div id="harmonium-bellows-wrapper" class="w-full h-16 md:h-24 mb-4 bg-stone-900 rounded-lg border border-[#4a281a] relative overflow-hidden flex cursor-pointer" title="Click or Press Space repeatedly to pump the air bellows!">
+                <!-- Animated multi-fold bellows -->
+                <div id="bellows-pumps" class="absolute inset-0 flex">
+                    <!-- Generating dynamic bellows visually with alternating folds -->
+                    <div class="bellows-fold w-1/12 h-full bg-stone-950 border-r-2 border-[#160d0a]"></div>
+                    <div class="bellows-fold w-1/12 h-full bg-stone-900 border-r-2 border-[#160d0a]"></div>
+                    <div class="bellows-fold w-1/12 h-full bg-stone-950 border-r-2 border-[#160d0a]"></div>
+                    <div class="bellows-fold w-1/12 h-full bg-stone-900 border-r-2 border-[#160d0a]"></div>
+                    <div class="bellows-fold w-1/12 h-full bg-stone-950 border-r-2 border-[#160d0a]"></div>
+                    <div class="bellows-fold w-1/12 h-full bg-stone-900 border-r-2 border-[#160d0a]"></div>
+                    <div class="bellows-fold w-1/12 h-full bg-stone-950 border-r-2 border-[#160d0a]"></div>
+                    <div class="bellows-fold w-1/12 h-full bg-stone-900 border-r-2 border-[#160d0a]"></div>
+                    <div class="bellows-fold w-1/12 h-full bg-stone-950 border-r-2 border-[#160d0a]"></div>
+                    <div class="bellows-fold w-1/12 h-full bg-stone-900 border-r-2 border-[#160d0a]"></div>
+                    <div class="bellows-fold w-1/12 h-full bg-stone-950 border-r-2 border-[#160d0a]"></div>
+                    <div class="bellows-fold w-1/12 h-full bg-stone-900"></div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30 pointer-events-none"></div>
+                <div class="absolute inset-0 flex flex-col justify-center items-center text-center text-amber-500/80 pointer-events-none p-2 font-medium">
+                    <p class="text-xs uppercase tracking-widest font-bold">A I R   B E L L O W S</p>
+                    <p id="bellows-hint" class="text-[9px] text-amber-600/60 mt-1">Manual Mode: Press Spacebar repeatedly or click to pump air</p>
+                </div>
+            </div>
+
+            <!-- KEYBOARD BED (Keys Container) -->
+            <div id="keyboard-bed" class="relative select-none touch-none w-full flex justify-center bg-stone-950 p-2 md:p-3 rounded-xl border border-white/10 shadow-inner">
+                <div id="keys-container" class="relative flex w-full max-w-5xl h-56 md:h-72">
+                    <!-- JavaScript dynamically populates white and black keys here -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Quick Help & QWERTY Map Panel -->
+        <div class="w-full bg-[#161210]/95 border border-[#302521] rounded-2xl p-4 md:p-6 shadow-xl">
+            <h3 class="text-amber-500 font-bold text-sm tracking-widest uppercase mb-3 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                SURTAR PERFORMANCE MANUAL
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-zinc-400">
+                <!-- QWERTY Layout guide -->
+                <div>
+                    <h4 class="font-bold text-amber-600 uppercase tracking-wider mb-2">QWERTY Mapping</h4>
+                    <p class="mb-2 leading-relaxed">Your computer keyboard acts directly as the keys. Ensure your system language is in English.</p>
+                    <div class="grid grid-cols-2 gap-1 bg-black/40 p-2.5 rounded-lg border border-white/5 font-mono text-[11px]">
+                        <div><span class="text-white font-bold bg-[#301c15] px-1 rounded">A - ;</span> : Natural Notes</div>
+                        <div><span class="text-amber-500 font-bold bg-zinc-900 px-1 rounded">W, E, T, Y...</span> : Sharps</div>
+                    </div>
+                </div>
+
+                <!-- Harmonium Bellows Play style description -->
+                <div>
+                    <h4 class="font-bold text-amber-600 uppercase tracking-wider mb-2">The Reed Mechanics</h4>
+                    <p class="mb-2 leading-relaxed">Harmonium bellows control air pressure. Play with **Manual Bellows** for complete expression:</p>
+                    <ul class="list-disc list-inside space-y-1 bg-black/40 p-2.5 rounded-lg border border-white/5">
+                        <li>Tap <kbd class="px-1.5 py-0.5 bg-zinc-800 text-white rounded font-mono font-bold">Spacebar</kbd> repeatedly to pump air.</li>
+                        <li>No wind pressure = No Sound!</li>
+                        <li>Toggle **Bass, Male, Female** stops to dynamically mix harmonium reeds.</li>
+                    </ul>
+                </div>
+
+                <!-- Piano sound guides -->
+                <div>
+                    <h4 class="font-bold text-amber-600 uppercase tracking-wider mb-2">Grand Piano Mode</h4>
+                    <p class="mb-2 leading-relaxed">Switch to Grand Piano for resonant physical modeling waveforms.</p>
+                    <ul class="list-disc list-inside space-y-1 bg-black/40 p-2.5 rounded-lg border border-white/5">
+                        <li>Press & hold <kbd class="px-1.5 py-0.5 bg-zinc-800 text-white rounded font-mono font-bold">Spacebar</kbd> for the Sustain Pedal.</li>
+                        <li>Sustain holds notes running even after releasing QWERTY keys.</li>
+                        <li>Adjust the **Sound Decay** slider for room reverberation depth.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full bg-[#0a0706] text-stone-600 py-3 text-center text-xs border-t border-stone-900">
+        <p>© 2026 SurTar Digital Acoustics. Synthesized completely using native Web Audio technologies.</p>
+    </footer>
+
+    <!-- Audio Synthesizer Logic -->
+    <script>
+        // Key Definitions & Frequencies mapping
+        // White Keys
+        const noteConfig = [
+            { note: "C4", frequency: 261.63, isBlack: false, triggerKey: "a", label: "Sa" },
+            { note: "C#4", frequency: 277.18, isBlack: true, triggerKey: "w", label: "re" },
+            { note: "D4", frequency: 293.66, isBlack: false, triggerKey: "s", label: "Re" },
+            { note: "D#4", frequency: 311.13, isBlack: true, triggerKey: "e", label: "ga" },
+            { note: "E4", frequency: 329.63, isBlack: false, triggerKey: "d", label: "Ga" },
+            { note: "F4", frequency: 349.23, isBlack: false, triggerKey: "f", label: "ma" },
+            { note: "F#4", frequency: 369.99, isBlack: true, triggerKey: "t", label: "Ma" },
+            { note: "G4", frequency: 392.00, isBlack: false, triggerKey: "g", label: "Pa" },
+            { note: "G#4", frequency: 415.30, isBlack: true, triggerKey: "y", label: "dha" },
+            { note: "A4", frequency: 440.00, isBlack: false, triggerKey: "h", label: "Dha" },
+            { note: "A#4", frequency: 466.16, isBlack: true, triggerKey: "u", label: "ni" },
+            { note: "B4", frequency: 493.88, isBlack: false, triggerKey: "j", label: "Ni" },
+            { note: "C5", frequency: 523.25, isBlack: false, triggerKey: "k", label: "Sa'" },
+            { note: "C#5", frequency: 554.37, isBlack: true, triggerKey: "o", label: "re'" },
+            { note: "D5", frequency: 587.33, isBlack: false, triggerKey: "l", label: "Re'" },
+            { note: "D#5", frequency: 622.25, isBlack: true, triggerKey: "p", label: "ga'" },
+            { note: "E5", frequency: 659.25, isBlack: false, triggerKey: ";", label: "Ga'" },
+            { note: "F5", frequency: 698.46, isBlack: false, triggerKey: "'", label: "ma'" }
+        ];
+
+        // Synthesizer State Variables
+        let audioCtx = null;
+        let mainVolumeNode = null;
+        let analyserNode = null;
+        let currentInstrument = "harmonium"; // 'harmonium' | 'piano'
+
+        // Harmonium configurations
+        let autoBellows = true;
+        let bellowsPressure = 1.0; // 0 to 1
+        let activeStops = {
+            bass: true,   // Sub-octave (-12 semitones)
+            male: true,   // fundamental (+0)
+            female: false, // High octave (+12 semitones)
+            chorus: false  // LFO vibrato
+        };
+
+        // Piano configurations
+        let isSustainActive = false;
+        let pianoDecay = 3.5; // seconds
+
+        // Active notes tracking
+        const activeNotes = {}; // Stores key trigger data: { frequency: { oscillators: [...], gainNode: Node, noteStartTime: timestamp } }
+        const pressedKeys = new Set(); // QWERTY keys physically pressed down
+
+        // Visual layout label mode
+        let labelMode = 'keys'; // 'keys' | 'notes' | 'none'
+
+        // Initialize Web Audio API elements safely upon first user gesture
+        function initAudio() {
+            if (audioCtx) return;
+            
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Primary dynamic stages
+            mainVolumeNode = audioCtx.createGain();
+            mainVolumeNode.gain.setValueAtTime(parseFloat(document.getElementById('global-volume').value), audioCtx.currentTime);
+            
+            // Analytical spectrum visualizer Setup
+            analyserNode = audioCtx.createAnalyser();
+            analyserNode.fftSize = 256;
+            
+            // Route
+            mainVolumeNode.connect(analyserNode);
+            analyserNode.connect(audioCtx.destination);
+            
+            // Start Visualizer Canvas loop
+            drawVisualizer();
+            
+            // Remove audio warning / pulse state from initialization button
+            const initBtn = document.getElementById('btn-audio-init');
+            initBtn.classList.remove('bg-emerald-600', 'animate-pulse');
+            initBtn.classList.add('bg-stone-700');
+            initBtn.innerText = "Audio Connected";
+            initBtn.disabled = true;
+        }
+
+        // Bellows pressure decay loop (For manual pump simulation)
+        setInterval(() => {
+            if (!autoBellows) {
+                // Natural rapid air-pressure decay
+                bellowsPressure = Math.max(0, bellowsPressure - 0.05);
+                updatePressureMeter();
+            } else {
+                bellowsPressure = 1.0;
+            }
+        }, 80);
+
+        function updatePressureMeter() {
+            const meter = document.getElementById('pressure-bar');
+            meter.style.width = `${bellowsPressure * 100}%`;
+            
+            // Update color intensity based on pressure
+            if (bellowsPressure > 0.6) {
+                meter.className = "h-full bg-emerald-500 transition-all duration-100";
+            } else if (bellowsPressure > 0.2) {
+                meter.className = "h-full bg-amber-500 transition-all duration-100";
+            } else {
+                meter.className = "h-full bg-rose-600 transition-all duration-100";
+            }
+        }
+
+        // Manual pump bellows action
+        function pumpBellows() {
+            if (autoBellows) return;
+            initAudio(); // make sure it's alive
+            
+            // Increment pressure
+            bellowsPressure = Math.min(1.0, bellowsPressure + 0.35);
+            updatePressureMeter();
+            
+            // Trigger beautiful animated flex on bellows fold elements
+            const folds = document.querySelectorAll('.bellows-fold');
+            folds.forEach((fold, idx) => {
+                fold.classList.add('compressing');
+                setTimeout(() => {
+                    fold.classList.remove('compressing');
+                }, 200 + (idx * 20));
+            });
+        }
+
+        // Generate custom sound waves for Harmonium & Piano additive synthesis
+        function playNoteAudio(noteObj) {
+            if (!audioCtx) return;
+            
+            // Prevent duplicated playback loops for same note if already held down
+            if (activeNotes[noteObj.note]) {
+                return;
+            }
+
+            const now = audioCtx.currentTime;
+            const noteData = {
+                oscillators: [],
+                gainNode: audioCtx.createGain(),
+                startTime: now,
+                released: false,
+                noteRef: noteObj
+            };
+
+            noteData.gainNode.connect(mainVolumeNode);
+
+            if (currentInstrument === "harmonium") {
+                // HARMONIUM ENGINE (Complex multi-reed simulation)
+                // A traditional harmonium uses brass reeds which generate a sharp, rich buzz (sawtooth and square hybrid)
+                
+                // Volume envelope controls based on wind pressure and keys pressed
+                const initialVol = autoBellows ? 0.45 : (0.45 * bellowsPressure);
+                noteData.gainNode.gain.setValueAtTime(0, now);
+                // Soft acoustic ramp up (attack)
+                noteData.gainNode.gain.linearRampToValueAtTime(initialVol, now + 0.08);
+
+                // Add Swara vibrato LFO if Chorus is enabled
+                let chorusLFO = null;
+                if (activeStops.chorus) {
+                    chorusLFO = audioCtx.createOscillator();
+                    const lfoGain = audioCtx.createGain();
+                    chorusLFO.frequency.setValueAtTime(6.2, now); // Vibrato speed (Hz)
+                    lfoGain.gain.setValueAtTime(3.5, now);       // Vibrato depth (cents)
+                    
+                    chorusLFO.connect(lfoGain);
+                    noteData.lfo = chorusLFO;
+                    noteData.lfoGain = lfoGain;
+                }
+
+                // Generates up to 3 individual register lines (Octave stops)
+                const registers = [];
+                if (activeStops.bass) registers.push(noteObj.frequency * 0.5); // Sub-Octave
+                if (activeStops.male) registers.push(noteObj.frequency);       // Fundamental
+                if (activeStops.female) registers.push(noteObj.frequency * 2.0); // High Octave
+
+                registers.forEach((baseFreq) => {
+                    // Create detuned double-reeds for authentic warm beat frequencies
+                    const detunes = [-4, 4];
+                    detunes.forEach((detuneVal) => {
+                        // Blend Sawtooth & Square waves for the perfect vintage Indian brass reed texture
+                        const oscSaw = audioCtx.createOscillator();
+                        oscSaw.type = 'sawtooth';
+                        oscSaw.frequency.setValueAtTime(baseFreq, now);
+                        oscSaw.detune.setValueAtTime(detuneVal, now);
+
+                        const oscTri = audioCtx.createOscillator();
+                        oscTri.type = 'triangle';
+                        oscTri.frequency.setValueAtTime(baseFreq, now);
+                        oscTri.detune.setValueAtTime(detuneVal + 2, now);
+
+                        // Gains to balance blend
+                        const blendSaw = audioCtx.createGain();
+                        blendSaw.gain.setValueAtTime(0.07, now);
+                        
+                        const blendTri = audioCtx.createGain();
+                        blendTri.gain.setValueAtTime(0.12, now);
+
+                        oscSaw.connect(blendSaw);
+                        blendSaw.connect(noteData.gainNode);
+
+                        oscTri.connect(blendTri);
+                        blendTri.connect(noteData.gainNode);
+
+                        if (activeStops.chorus && noteData.lfoGain) {
+                            noteData.lfoGain.connect(oscSaw.frequency);
+                            noteData.lfoGain.connect(oscTri.frequency);
+                        }
+
+                        oscSaw.start(now);
+                        oscTri.start(now);
+
+                        noteData.oscillators.push(oscSaw, oscTri);
+                    });
+                });
+
+                if (chorusLFO) {
+                    chorusLFO.start(now);
+                }
+
+                // Constant volume adjusting tracking bellows pressure dynamically while note is held
+                const pressureInterval = setInterval(() => {
+                    if (noteData.released) {
+                        clearInterval(pressureInterval);
+                        return;
+                    }
+                    if (!autoBellows) {
+                        const targetVol = 0.45 * bellowsPressure;
+                        noteData.gainNode.gain.setValueAtTime(noteData.gainNode.gain.value, audioCtx.currentTime);
+                        noteData.gainNode.gain.linearRampToValueAtTime(targetVol, audioCtx.currentTime + 0.05);
+                    }
+                }, 50);
+
+            } else {
+                // GRAND PIANO ENGINE (Physical Model Additive Synthesis approximation)
+                // Instantly punchy attack, bright high harmonics that fade quickly, leaving a resonant warm decay.
+                
+                // Trigger Hammer sound block (percussive pop) using instantaneous high noise impulse
+                const noiseImpulse = createHammerImpulse();
+                if (noiseImpulse) {
+                    noiseImpulse.connect(noteData.gainNode);
+                }
+
+                // Create main tones (Fundamental + Harmonics)
+                const fundamentalFreq = noteObj.frequency;
+                const harmonics = [
+                    { ratio: 1.0, gain: 0.35, detune: 0 },
+                    { ratio: 2.0, gain: 0.15, detune: 2 },
+                    { ratio: 3.0, gain: 0.08, detune: -1 },
+                    { ratio: 4.0, gain: 0.04, detune: 3 },
+                    { ratio: 5.0, gain: 0.015, detune: -2 }
+                ];
+
+                harmonics.forEach((harmonic) => {
+                    const osc = audioCtx.createOscillator();
+                    // Warm combination of Sine and Triangle to avoid synthetic sharpness
+                    osc.type = harmonic.ratio === 1.0 ? 'triangle' : 'sine';
+                    osc.frequency.setValueAtTime(fundamentalFreq * harmonic.ratio, now);
+                    osc.detune.setValueAtTime(harmonic.detune, now);
+
+                    const harmonicGain = audioCtx.createGain();
+                    // Envelope with instantaneous attack
+                    harmonicGain.gain.setValueAtTime(0, now);
+                    harmonicGain.gain.linearRampToValueAtTime(harmonic.gain, now + 0.005);
+                    // Higher harmonics decay faster
+                    const harmonicDecaySpeed = pianoDecay / (harmonic.ratio * 0.7);
+                    harmonicGain.gain.exponentialRampToValueAtTime(0.001, now + harmonicDecaySpeed);
+
+                    osc.connect(harmonicGain);
+                    harmonicGain.connect(noteData.gainNode);
+                    osc.start(now);
+                    osc.stop(now + harmonicDecaySpeed + 0.1);
+
+                    noteData.oscillators.push(osc);
+                });
+
+                // Primary Volume Gain Envelope
+                noteData.gainNode.gain.setValueAtTime(0, now);
+                noteData.gainNode.gain.linearRampToValueAtTime(0.8, now + 0.004);
+                // Fall slowly to secondary resonance decay
+                noteData.gainNode.gain.exponentialRampToValueAtTime(0.15, now + 0.4);
+            }
+
+            activeNotes[noteObj.note] = noteData;
+            highlightKeyElement(noteObj, true);
+        }
+
+        // Simulates the physical wooden hammer strike of the piano
+        function createHammerImpulse() {
+            if (!audioCtx) return null;
+            const bufferSize = audioCtx.sampleRate * 0.02; // Very brief (20ms)
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            
+            for (let i = 0; i < bufferSize; i++) {
+                // High frequency crack decaying immediately to pink noise
+                data[i] = (Math.random() * 2 - 1) * Math.pow(1 - (i / bufferSize), 4) * 0.15;
+            }
+            
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            return noise;
+        }
+
+        // Release Synth Sound dynamically
+        function releaseNoteAudio(noteObj) {
+            const noteData = activeNotes[noteObj.note];
+            if (!noteData) return;
+
+            noteData.released = true;
+            const now = audioCtx.currentTime;
+
+            if (currentInstrument === "harmonium") {
+                // Rapid release to prevent sudden audio pop
+                noteData.gainNode.gain.cancelScheduledValues(now);
+                noteData.gainNode.gain.setValueAtTime(noteData.gainNode.gain.value, now);
+                noteData.gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+                
+                // Stop oscillators
+                setTimeout(() => {
+                    noteData.oscillators.forEach(osc => {
+                        try { osc.stop(); } catch(e) {}
+                    });
+                    if (noteData.lfo) {
+                        try { noteData.lfo.stop(); } catch(e) {}
+                    }
+                    noteData.gainNode.disconnect();
+                }, 150);
+
+                delete activeNotes[noteObj.note];
+                highlightKeyElement(noteObj, false);
+
+            } else {
+                // Piano mode release (affected by Sustain pedal)
+                if (isSustainActive) {
+                    // Retain note in active memory, waiting for sustain pedal off to clear
+                    noteData.sustained = true;
+                } else {
+                    triggerPianoNaturalRelease(noteObj, noteData);
+                }
+            }
+        }
+
+        function triggerPianoNaturalRelease(noteObj, noteData) {
+            const now = audioCtx.currentTime;
+            noteData.gainNode.gain.cancelScheduledValues(now);
+            noteData.gainNode.gain.setValueAtTime(noteData.gainNode.gain.value, now);
+            // Smooth string damping
+            noteData.gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+
+            setTimeout(() => {
+                noteData.oscillators.forEach(osc => {
+                    try { osc.stop(); } catch(e) {}
+                });
+                noteData.gainNode.disconnect();
+            }, 650);
+
+            delete activeNotes[noteObj.note];
+            highlightKeyElement(noteObj, false);
+        }
+
+        // Sustain Release Trigger (Happens when sustain pedal released)
+        function releaseSustainedNotes() {
+            Object.keys(activeNotes).forEach(noteName => {
+                const noteData = activeNotes[noteName];
+                if (noteData && noteData.sustained) {
+                    triggerPianoNaturalRelease(noteData.noteRef, noteData);
+                }
+            });
+        }
+
+        // Highlights on-screen keys when played via computer keyboard
+        function highlightKeyElement(noteObj, isActive) {
+            const keyEl = document.querySelector(`[data-note="${noteObj.note}"]`);
+            if (!keyEl) return;
+            if (isActive) {
+                keyEl.classList.add('active');
+            } else {
+                keyEl.classList.remove('active');
+            }
+        }
+
+        // Renders visual key elements dynamically inside viewport 
+        function renderKeyboardBed() {
+            const container = document.getElementById('keys-container');
+            container.innerHTML = '';
+
+            // Count total non-blacks (white keys) to scale width ratios evenly
+            const whiteKeysCount = noteConfig.filter(n => !n.isBlack).length;
+            const whiteKeyWidthPercent = 100 / whiteKeysCount;
+
+            let whiteKeyIndex = 0;
+
+            noteConfig.forEach((noteObj) => {
+                const keyEl = document.createElement('div');
+                keyEl.setAttribute('data-note', noteObj.note);
+                
+                // Label selection text
+                let visibleLabel = "";
+                if (labelMode === 'keys') {
+                    visibleLabel = noteObj.triggerKey.toUpperCase();
+                } else if (labelMode === 'notes') {
+                    visibleLabel = noteObj.label;
+                }
+
+                if (!noteObj.isBlack) {
+                    // Position White Key
+                    keyEl.className = "white-key flex flex-col justify-end pb-4 items-center cursor-pointer select-none relative group";
+                    keyEl.style.width = `${whiteKeyWidthPercent}%`;
+                    keyEl.style.height = "100%";
+                    keyEl.style.left = "0px";
+                    
+                    keyEl.innerHTML = `
+                        <div class="pointer-events-none select-none text-center">
+                            <span class="text-[10px] md:text-xs font-bold text-stone-600 block group-hover:text-amber-700 transition">${visibleLabel}</span>
+                            <span class="text-[8px] md:text-[10px] text-stone-400 mt-0.5 block">${noteObj.note}</span>
+                        </div>
+                    `;
+
+                    // Push index
+                    whiteKeyIndex++;
+                    container.appendChild(keyEl);
+                } else {
+                    // Position Black Key (Overlap relative to standard layout)
+                    keyEl.className = "black-key flex flex-col justify-end pb-4 items-center cursor-pointer select-none absolute group";
+                    keyEl.style.height = "60%";
+                    
+                    // Approximate black key position based on preceding white key offset
+                    const whiteKeyIdxBefore = whiteKeyIndex - 1;
+                    const leftOffset = (whiteKeyIdxBefore * whiteKeyWidthPercent) + (whiteKeyWidthPercent * 0.65);
+                    keyEl.style.width = `${whiteKeyWidthPercent * 0.7}%`;
+                    keyEl.style.left = `${leftOffset}%`;
+
+                    keyEl.innerHTML = `
+                        <div class="pointer-events-none select-none text-center">
+                            <span class="text-[8px] md:text-[10px] font-bold text-amber-500/80 block group-hover:text-amber-400 transition">${visibleLabel}</span>
+                            <span class="text-[7px] md:text-[8px] text-zinc-500 mt-0.5 block">${noteObj.note}</span>
+                        </div>
+                    `;
+                    container.appendChild(keyEl);
+                }
+
+                // Add pointer event handling for smooth mouse/touch support
+                setupInteractiveEvents(keyEl, noteObj);
+            });
+        }
+
+        // Polyphonic pointer events supporting dragging/sliding across keys
+        let isPointerDown = false;
+        document.body.addEventListener('pointerdown', () => { isPointerDown = true; });
+        document.body.addEventListener('pointerup', () => { isPointerDown = false; });
+        document.body.addEventListener('pointercancel', () => { isPointerDown = false; });
+
+        function setupInteractiveEvents(element, noteObj) {
+            // Touch/Mouse start down
+            element.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                initAudio();
+                playNoteAudio(noteObj);
+            });
+
+            // Slide over keys playing them continuously if pointer is down
+            element.addEventListener('pointerenter', (e) => {
+                if (isPointerDown) {
+                    playNoteAudio(noteObj);
+                }
+            });
+
+            // Lift off pointer
+            element.addEventListener('pointerleave', (e) => {
+                releaseNoteAudio(noteObj);
+            });
+
+            element.addEventListener('pointerup', (e) => {
+                e.preventDefault();
+                releaseNoteAudio(noteObj);
+            });
+        }
+
+        // QWERTY Hardware Keyboard Event Listeners mapping directly to synthesizers
+        window.addEventListener('keydown', (e) => {
+            // Ignore system hotkeys or forms focus
+            if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+
+            const keyPressed = e.key.toLowerCase();
+
+            // Sustain pedal / Bellows Spacebar trigger configuration
+            if (keyPressed === ' ') {
+                e.preventDefault();
+                initAudio();
+                if (currentInstrument === "harmonium") {
+                    pumpBellows();
+                } else {
+                    // Sustain Pedal Active
+                    isSustainActive = true;
+                    document.getElementById('btn-sustain').classList.add('bg-amber-950/40', 'border-amber-700/50', 'text-amber-500');
+                    document.getElementById('sustain-dot').className = "w-2 h-2 rounded-full bg-amber-500 glow-gold";
+                }
+                return;
+            }
+
+            // Find matching note config
+            const noteObj = noteConfig.find(n => n.triggerKey === keyPressed);
+            if (noteObj) {
+                initAudio();
+                pressedKeys.add(keyPressed);
+                playNoteAudio(noteObj);
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            const keyPressed = e.key.toLowerCase();
+
+            if (keyPressed === ' ') {
+                e.preventDefault();
+                if (currentInstrument === "piano") {
+                    isSustainActive = false;
+                    document.getElementById('btn-sustain').classList.remove('bg-amber-950/40', 'border-amber-700/50', 'text-amber-500');
+                    document.getElementById('sustain-dot').className = "w-2 h-2 rounded-full bg-zinc-600";
+                    releaseSustainedNotes();
+                }
+                return;
+            }
+
+            const noteObj = noteConfig.find(n => n.triggerKey === keyPressed);
+            if (noteObj) {
+                pressedKeys.delete(keyPressed);
+                releaseNoteAudio(noteObj);
+            }
+        });
+
+        // Toggle Labels event listeners
+        document.getElementById('lbl-keys').addEventListener('click', () => {
+            labelMode = 'keys';
+            updateLabelButtons();
+            renderKeyboardBed();
+        });
+        document.getElementById('lbl-notes').addEventListener('click', () => {
+            labelMode = 'notes';
+            updateLabelButtons();
+            renderKeyboardBed();
+        });
+        document.getElementById('lbl-none').addEventListener('click', () => {
+            labelMode = 'none';
+            updateLabelButtons();
+            renderKeyboardBed();
+        });
+
+        function updateLabelButtons() {
+            const btns = {
+                keys: document.getElementById('lbl-keys'),
+                notes: document.getElementById('lbl-notes'),
+                none: document.getElementById('lbl-none')
+            };
+
+            Object.keys(btns).forEach(mode => {
+                if (mode === labelMode) {
+                    btns[mode].className = "px-2.5 py-1 rounded-md text-amber-500 bg-[#301c15] font-semibold transition";
+                } else {
+                    btns[mode].className = "px-2.5 py-1 rounded-md text-zinc-400 hover:text-zinc-200 transition";
+                }
+            });
+        }
+
+        // Instrument Swapper Toggle
+        const selectorHarmonium = document.getElementById('selector-harmonium');
+        const selectorPiano = document.getElementById('selector-piano');
+        const instrumentBody = document.getElementById('instrument-body');
+        const harmoniumControls = document.getElementById('harmonium-controls');
+        const pianoControls = document.getElementById('piano-controls');
+        const harmoniumBellows = document.getElementById('harmonium-bellows-wrapper');
+
+        selectorHarmonium.addEventListener('click', () => {
+            if (currentInstrument === "harmonium") return;
+            currentInstrument = "harmonium";
+            
+            // Switch themes visually
+            selectorHarmonium.className = "flex flex-col items-center justify-center py-3 px-4 rounded-xl text-amber-500 bg-amber-950/40 border border-amber-800/40 shadow-inner transition group";
+            selectorPiano.className = "flex flex-col items-center justify-center py-3 px-4 rounded-xl text-zinc-500 hover:text-zinc-300 transition group";
+            
+            instrumentBody.className = "w-full wood-gradient-harmonium rounded-2xl p-4 md:p-6 transition-all duration-500";
+            
+            harmoniumControls.classList.remove('hidden');
+            harmoniumControls.classList.add('flex');
+            pianoControls.classList.add('hidden');
+            pianoControls.classList.remove('flex');
+            harmoniumBellows.classList.remove('hidden');
+            harmoniumBellows.classList.add('flex');
+
+            killAllActiveNotes();
+        });
+
+        selectorPiano.addEventListener('click', () => {
+            if (currentInstrument === "piano") return;
+            currentInstrument = "piano";
+            
+            // Switch themes visually
+            selectorPiano.className = "flex flex-col items-center justify-center py-3 px-4 rounded-xl text-white bg-zinc-900 border border-zinc-800 shadow-inner transition group";
+            selectorHarmonium.className = "flex flex-col items-center justify-center py-3 px-4 rounded-xl text-amber-700 hover:text-amber-500 transition group";
+            
+            instrumentBody.className = "w-full wood-gradient-piano rounded-2xl p-4 md:p-6 transition-all duration-500";
+            
+            pianoControls.classList.remove('hidden');
+            pianoControls.classList.add('flex');
+            harmoniumControls.classList.add('hidden');
+            harmoniumControls.classList.remove('flex');
+            harmoniumBellows.classList.add('hidden');
+            harmoniumBellows.classList.remove('flex');
+
+            killAllActiveNotes();
+        });
+
+        function killAllActiveNotes() {
+            Object.keys(activeNotes).forEach(noteName => {
+                const noteData = activeNotes[noteName];
+                if (noteData) {
+                    noteData.oscillators.forEach(osc => {
+                        try { osc.stop(); } catch(e) {}
+                    });
+                    try { noteData.gainNode.disconnect(); } catch(e) {}
+                }
+            });
+            // Clear reference
+            for (let member in activeNotes) delete activeNotes[member];
+            renderKeyboardBed();
+        }
+
+        // Stop knobs dynamic draw toggles
+        const stopsList = ['bass', 'male', 'female', 'chorus'];
+        stopsList.forEach(stopName => {
+            const stopButton = document.getElementById(`stop-${stopName}`);
+            stopButton.addEventListener('click', () => {
+                activeStops[stopName] = !activeStops[stopName];
+                
+                // Toggle glow style
+                if (activeStops[stopName]) {
+                    stopButton.classList.add('glow-gold');
+                    stopButton.classList.remove('border-amber-900');
+                    stopButton.classList.add('border-amber-500');
+                } else {
+                    stopButton.classList.remove('glow-gold');
+                    stopButton.classList.remove('border-amber-500');
+                    stopButton.classList.add('border-amber-900');
+                }
+            });
+        });
+
+        // Bellows Manual vs Auto toggle setup
+        const autoBellowsToggle = document.getElementById('auto-bellows');
+        const pressureMeterContainer = document.getElementById('pressure-meter-container');
+        const bellowsHint = document.getElementById('bellows-hint');
+
+        autoBellowsToggle.addEventListener('change', (e) => {
+            autoBellows = e.target.checked;
+            if (autoBellows) {
+                pressureMeterContainer.classList.add('hidden');
+                pressureMeterContainer.classList.remove('flex');
+                bellowsHint.innerText = "Continuous air flow active. Focus on playing.";
+                bellowsPressure = 1.0;
+            } else {
+                pressureMeterContainer.classList.remove('hidden');
+                pressureMeterContainer.classList.add('flex');
+                bellowsHint.innerText = "Manual Mode: Press Spacebar repeatedly or click to pump air";
+                bellowsPressure = 0.0;
+                updatePressureMeter();
+            }
+        });
+
+        // Manual pump bellows click event
+        document.getElementById('harmonium-bellows-wrapper').addEventListener('click', pumpBellows);
+
+        // Global Volume adjust
+        document.getElementById('global-volume').addEventListener('input', (e) => {
+            if (mainVolumeNode) {
+                mainVolumeNode.gain.setValueAtTime(parseFloat(e.target.value), audioCtx.currentTime);
+            }
+        });
+
+        // Piano Decay adjuster
+        document.getElementById('piano-decay').addEventListener('input', (e) => {
+            pianoDecay = parseFloat(e.target.value);
+        });
+
+        // Manual audio activation button hook
+        document.getElementById('btn-audio-init').addEventListener('click', () => {
+            initAudio();
+        });
+
+        // Piano manual sustain click trigger
+        document.getElementById('btn-sustain').addEventListener('mousedown', () => {
+            initAudio();
+            isSustainActive = true;
+            document.getElementById('btn-sustain').classList.add('bg-amber-950/40', 'border-amber-700/50', 'text-amber-500');
+            document.getElementById('sustain-dot').className = "w-2 h-2 rounded-full bg-amber-500 glow-gold";
+        });
+        document.getElementById('btn-sustain').addEventListener('mouseup', () => {
+            isSustainActive = false;
+            document.getElementById('btn-sustain').classList.remove('bg-amber-950/40', 'border-amber-700/50', 'text-amber-500');
+            document.getElementById('sustain-dot').className = "w-2 h-2 rounded-full bg-zinc-600";
+            releaseSustainedNotes();
+        });
+
+        // Draw Canvas Live Visualizer Waveform
+        function drawVisualizer() {
+            if (!analyserNode) return;
+            requestAnimationFrame(drawVisualizer);
+
+            const canvas = document.getElementById('visualizer');
+            const canvasCtx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            const bufferLength = analyserNode.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            analyserNode.getByteTimeDomainData(dataArray);
+
+            canvasCtx.fillStyle = 'rgba(11, 9, 10, 0.5)';
+            canvasCtx.fillRect(0, 0, width, height);
+
+            canvasCtx.lineWidth = 2;
+            // Warm Amber wave in Harmonium, cool cyber silver in Piano
+            canvasCtx.strokeStyle = currentInstrument === 'harmonium' ? '#f59e0b' : '#a1a1aa';
+            canvasCtx.beginPath();
+
+            const sliceWidth = width * 1.0 / bufferLength;
+            let x = 0;
+
+            for (let i = 0; i < bufferLength; i++) {
+                const v = dataArray[i] / 128.0;
+                const y = v * height / 2;
+
+                if (i === 0) {
+                    canvasCtx.moveTo(x, y);
+                } else {
+                    canvasCtx.lineTo(x, y);
+                }
+
+                x += sliceWidth;
+            }
+
+            canvasCtx.lineTo(canvas.width, canvas.height / 2);
+            canvasCtx.stroke();
+        }
+
+        // Initialize App & Canvas Layout
+        window.onload = () => {
+            renderKeyboardBed();
+            
+            // Adjust canvas rendering dimensions dynamically
+            const canvas = document.getElementById('visualizer');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        };
+
+        window.onresize = () => {
+            renderKeyboardBed();
+        };
+
+    </script>
+</body>
+</html>
