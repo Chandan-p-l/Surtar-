@@ -19,7 +19,7 @@
 
 👉 **Live Application**
 
-https://YOUR_USERNAME.github.io/SurTar/
+https://surtar.vercel.app/
 
 > Replace the URL above with your actual GitHub Pages deployment URL.
 
